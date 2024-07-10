@@ -1,11 +1,14 @@
 from flask import Flask, render_template, request
 import os, json, boto3
 from botocore.config import Config as s3Config
+import logging
 
 S3_BUCKET = os.environ.get('S3_BUCKET', '')
 MAX_SIZE = int(os.environ.get("MAX_SIZE", 20)) 
 CUR_DIR = os.path.dirname(os.path.realpath(__file__))
 PORT = int(os.environ.get('PORT', 5000))
+
+gunicorn_logger = logging.getLogger('gunicorn.error')
 
 s3_config = s3Config(
 	region_name = os.environ.get('S3_REGION', 'us-east-2'),
@@ -39,13 +42,13 @@ def create_app() -> Flask:
 		#TODO: make this a conditional with the generated presigned post url? content-length-range maybe?
 		if file_size >= MAX_SIZE * 1024 * 1024:
 			return_data['error'] = f"The requested file size was too large! The max size is {MAX_SIZE} MB"
-
+   
 		if "image/" not in file_type:
 			return_data['error'] = "The requested type was not an image!"
    
 		if S3_BUCKET == '':
 			return_data['error'] = "The specified target for the file upload does not exist!"
-
+   
 		if return_data['error'] == '':  
 			s3 = boto3.client('s3', config=s3_config)
 			try:
@@ -61,8 +64,12 @@ def create_app() -> Flask:
 
 				return_data['url'] = f'https://{S3_BUCKET}.s3.amazonaws.com/{file_name}'
 
-			except TypeError:
+			except TypeError as e:
 				return_data['error'] = 'Failed to authenticate file'
+				gunicorn_logger.error("Upload error: %s", return_data['error'])
+		else:
+			gunicorn_logger.error("Upload error: %s", return_data['error'])
+   
 
 		return json.dumps(return_data)
 
