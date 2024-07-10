@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 import os, json, boto3
 
-S3_BUCKET = os.environ.get('S3_BUCKET', 'test0bucket-234234')
+S3_BUCKET = os.environ.get('S3_BUCKET')
 MAX_SIZE = int(os.environ.get("MAX_SIZE", 20)) 
 CUR_DIR = os.path.dirname(os.path.realpath(__file__))
 PORT = int(os.environ.get('PORT', 5000))
