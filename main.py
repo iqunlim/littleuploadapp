@@ -21,7 +21,7 @@ def create_app() -> Flask:
 		return "Hello"
 	'''
 
-	@app.route('/sign-s3/', methods=["POST"])
+	@app.route('/sign-s3/')
 	def sign_s3():
 
 		file_name = request.args.get('fileName')
