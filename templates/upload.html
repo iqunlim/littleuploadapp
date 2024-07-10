@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="/static/upload.js"></script>
+  </head>
+  <body>
+
+    <h1>Upload Image</h1>
+
+    <hr>
+    
+    <input type="file" id="file-input">
+    <p id="status">Please select a file</p>
+    <img style="border:1px solid gray;" id="preview" src="/static/media/default.webp">
+    <p id="link"></p>
+    <input id="uploadButton" type="button" value="Upload" onclick="initUpload()" />
+  </body>
+</html>
