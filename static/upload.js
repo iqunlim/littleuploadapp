@@ -10,7 +10,6 @@ function uploadFile(file, s3Data, url){
     postData.append(key, s3Data.fields[key]);
   }
   postData.append('file', file);
-  console.log(postData)
   xhr.onreadystatechange = () => {
     if(xhr.readyState === 4){
       if(xhr.status === 200 || xhr.status === 204){
