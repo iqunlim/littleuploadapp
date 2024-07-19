@@ -1,10 +1,20 @@
+const API_URL =  '/v2/sign-s3/'
+
+// Sometimes, when you run JSON.parse it doesnt REALLY parse. This makes sure it either eventually parses or explodes and throws an error.
+function reallyParse(item) {
+  let ret = JSON.parse(item);
+  while (typeof ret === "string") {
+    ret = JSON.parse(ret);
+  }
+  return ret;
+}
 /*
   Function to carry out the actual POST request to S3 using the signed request from the Python app.
 */
 function uploadFile(file, s3Data, url){
   const xhr = new XMLHttpRequest();
   xhr.open('POST', s3Data.url);
-
+  console.log(s3Data)
   const postData = new FormData();
   for(key in s3Data.fields){
     postData.append(key, s3Data.fields[key]);
@@ -33,11 +43,11 @@ function uploadFile(file, s3Data, url){
 */
 function getSignedRequest(file){
   const xhr = new XMLHttpRequest();
-  xhr.open('GET', `/sign-s3?fileName=${file.name}&fileType=${file.type}&t=${file.size}`);
+  xhr.open('GET', `${API_URL}?fileName=${file.name}&fileType=${file.type}&t=${file.size}`);
   xhr.onreadystatechange = () => {
     if(xhr.readyState === 4){
       if(xhr.status === 200) {
-        const response = JSON.parse(xhr.responseText);
+        const response = reallyParse(xhr.response)
         if(response.error != "") { 
           alert(response.error)
         }
