@@ -30,7 +30,7 @@ def create_app() -> Flask:
 
 	@app.route("/")
 	def main():
-		return render_template('upload.html')
+		return render_template('index.html')
 
 	@app.route('/v2/sign-s3/')
 	def sign_s3_v2():
@@ -39,13 +39,15 @@ def create_app() -> Flask:
 			"fileType": request.args.get('fileType'),
 			"t": int(request.args.get('t'))
 		}
-		api_url = f"{POST_LMBDA_URL}/v1/sign-s3?fileName={request_dict['fileName']}&fileType={request_dict['fileType']}&t={request_dict['t']}"
-		return requests.get(api_url).json()
+		api_url = f"https://{POST_LMBDA_URL}/sign-s3?fileName={request_dict['fileName']}&fileType={request_dict['fileType']}&t={request_dict['t']}"
+		ret_val = requests.get(api_url).json()
+		return ret_val
 	
 	#Fallback
 	@app.route('/v1/sign-s3/')
 	def sign_s3():
-		return "DO NOT USE"
+		return {'error':'INVALID API URL'}
+		# left here as backup
 		file_name = request.args.get('fileName')
 		file_type = request.args.get('fileType')
 		file_size = int(request.args.get('t'))
