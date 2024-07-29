@@ -7,3 +7,7 @@ Environment variables:
 To use:
 - `python3 -m pip install -r requirements.txt`
 - `./run.sh`
+
+# 
+You can find a container for use here:
+https://hub.docker.com/repository/docker/iqunlim/littleupload
